@@ -1,0 +1,24 @@
+{
+  dependencyDashboardLabels: ['effort | ongoing', 'scope | dependencies'],
+  dependencyDashboardOSVVulnerabilitySummary: 'all',
+  extends: [
+    'config:recommended',
+    'default:automergeDigest',
+    'default:automergeMinor',
+    'default:combinePatchMinorReleases',
+    'default:dependencyDashboard',
+    'default:enableVulnerabilityAlerts',
+    'default:maintainLockFilesWeekly',
+    'default:prHourlyLimit4',
+  ],
+  minimumReleaseAge: '7 days',
+  prConcurrentLimit: 20,
+  rebaseWhen: 'conflicted',
+  stopUpdatingLabel: 'renovate | stop update',
+  packageRules: [
+    {
+      matchManagers: ['gomod'],
+      postUpdateOptions: ['gomodTidy'],
+    },
+  ],
+}

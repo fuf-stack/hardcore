@@ -1,0 +1,39 @@
+name: Public API proposal
+description: Propose a reusable API backed by a concrete consumer need.
+title: 'api: '
+labels: [enhancement]
+body:
+  - type: input
+    id: packages
+    attributes:
+      label: Affected or proposed package
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: Consumer problem
+      description: Describe the concrete use case without assuming an API.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Existing implementation or evidence
+      description: Where is this mechanism already needed or implemented?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API
+      description: Include Go usage and runtime behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: boundary
+    attributes:
+      label: Product boundary and compatibility
+      description: Explain what remains private and how the API can evolve.
+    validations:
+      required: true

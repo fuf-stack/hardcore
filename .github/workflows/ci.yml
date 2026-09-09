@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Format, vet, and test
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+          cache-dependency-path: |
+            go.mod
+            tools/go.sum
+      - name: Verify module files
+        run: |
+          go mod tidy
+          (cd tools && go mod tidy)
+          git diff --exit-code HEAD -- go.mod go.sum tools/go.mod tools/go.sum
+          test -z "$(git ls-files --others --exclude-standard -- go.mod go.sum tools/go.mod tools/go.sum)"
+      - name: Run checks
+        run: make check
+      - name: Upload coverage
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage
+          path: coverage.out
