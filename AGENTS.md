@@ -6,6 +6,8 @@ architecture.
 
 ## Architecture
 
+- `database` owns driver-neutral SQL pool startup, configuration, and readiness.
+
 - `health` owns HTTP liveness/readiness behavior and dependency checks.
 - `service` owns process-serving and graceful-shutdown behavior.
 - `cmd/example` demonstrates composition and may depend on every public package.

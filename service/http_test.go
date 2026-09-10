@@ -67,8 +67,11 @@ func TestServeWaitsForInFlightRequest(t *testing.T) {
 	listener := listen(t)
 	requestStarted := make(chan struct{})
 	releaseRequest := make(chan struct{})
+	handlerFinished := make(chan struct{})
+	var cleaned atomic.Bool
 	server := &http.Server{
 		Handler: http.HandlerFunc(func(writer http.ResponseWriter, _ *http.Request) {
+			defer close(handlerFinished)
 			close(requestStarted)
 			<-releaseRequest
 			writer.WriteHeader(http.StatusNoContent)
@@ -79,7 +82,16 @@ func TestServeWaitsForInFlightRequest(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	serveResult := make(chan error, 1)
 	go func() {
-		serveResult <- service.Serve(ctx, server, listener, service.WithShutdownTimeout(time.Second))
+		serveResult <- service.Serve(ctx, server, listener, service.WithShutdownTimeout(time.Second),
+			service.WithCleanup(func() error {
+				select {
+				case <-handlerFinished:
+				default:
+					t.Error("cleanup ran before the handler finished")
+				}
+				cleaned.Store(true)
+				return nil
+			}))
 	}()
 
 	requestResult := make(chan error, 1)
@@ -110,6 +122,9 @@ func TestServeWaitsForInFlightRequest(t *testing.T) {
 	}
 	if err := <-serveResult; err != nil {
 		t.Fatalf("serve: %v", err)
+	}
+	if !cleaned.Load() {
+		t.Fatal("cleanup did not run after draining")
 	}
 }
 
@@ -212,6 +227,7 @@ func TestListenAndServeRejectsInvalidValues(t *testing.T) {
 // drain is force-closed and that the shutdown deadline error reaches the caller.
 func TestServeForceClosesAfterShutdownTimeout(t *testing.T) {
 	listener := listen(t)
+	var cleaned atomic.Bool
 	requestStarted := make(chan struct{})
 	releaseRequest := make(chan struct{})
 	server := &http.Server{
@@ -225,7 +241,8 @@ func TestServeForceClosesAfterShutdownTimeout(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	serveResult := make(chan error, 1)
 	go func() {
-		serveResult <- service.Serve(ctx, server, listener, service.WithShutdownTimeout(50*time.Millisecond))
+		serveResult <- service.Serve(ctx, server, listener, service.WithShutdownTimeout(50*time.Millisecond),
+			service.WithCleanup(func() error { cleaned.Store(true); return nil }))
 	}()
 	requestResult := make(chan error, 1)
 	go func() {
@@ -252,6 +269,9 @@ func TestServeForceClosesAfterShutdownTimeout(t *testing.T) {
 		t.Fatal("service did not force shutdown")
 	}
 
+	if !cleaned.Load() {
+		t.Error("cleanup did not run after forced connection closure")
+	}
 	close(releaseRequest)
 	<-requestResult
 }

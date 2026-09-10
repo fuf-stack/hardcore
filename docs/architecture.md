@@ -12,14 +12,20 @@ cmd/example
   ├── health
   └── service
 
-health       service
-   │            │
-   └── Go standard library
+database    health    service
+   │          │         │
+   └──────────┴─────────┴── Go standard library
 ```
 
-`health` and `service` are independent foundations. The example application
+`database`, `health`, and `service` are independent foundations. The example application
 composes them by using a service shutdown hook to close its readiness gate.
-Neither package needs to know the other exists.
+No production package depends on another foundation package.
+
+Database startup validates connectivity under a deadline and closes failed
+pools. Readiness pings compose with health checks through a caller-owned closure.
+Post-drain cleanup belongs to service, not database: it accepts arbitrary close
+callbacks and runs them in reverse order, including on bind failure. Applications
+select drivers, configure credentials, and retain ORM and migration ownership.
 
 The Go packages share one module version. This keeps compatibility and release
 work understandable while the library is young. Multiple modules are justified
@@ -31,7 +37,7 @@ These are directions, not promised packages:
 
 - ConnectRPC server/client conventions, interceptors, errors, batching,
   filtering, and cursor pagination;
-- database connection handling, transactions, dialect behavior, pagination,
+- database transactions, dialect behavior, pagination,
   migrations, and integration-test infrastructure;
 - authentication principals and authorization interfaces that do not encode
   product permissions;

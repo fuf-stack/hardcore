@@ -13,11 +13,12 @@ as normal Go packages.
 
 | Package | Responsibility |
 | --- | --- |
+| [`database`](./database) | Bounded SQL startup, pool configuration, and readiness checks |
 | [`health`](./health) | Liveness and readiness probes with bounded dependency checks |
-| [`service`](./service) | HTTP serving, graceful shutdown, and shutdown hooks |
+| [`service`](./service) | HTTP serving, graceful shutdown, and post-drain resource cleanup |
 
-The initial vertical slice deliberately covers only process lifecycle and
-health. RPC conventions, database access, authentication mechanisms, shared
+The foundations cover process lifecycle, health, and driver-neutral SQL pool
+lifecycle. RPC conventions, queries, authentication mechanisms, shared
 contracts, and test infrastructure will be extracted only when a real consumer
 gives us a concrete API to design.
 

@@ -29,6 +29,7 @@ type ShutdownHook func(context.Context) error
 type Option func(*config) error
 
 type config struct {
+	cleanup         []func() error
 	shutdownTimeout time.Duration
 	shutdownHooks   []ShutdownHook
 }
@@ -58,9 +59,35 @@ func WithShutdownHook(hook ShutdownHook) Option {
 	}
 }
 
+// WithCleanup registers resource cleanup after HTTP draining or forced connection
+// closure on timeout, including bind failures. Callbacks run in reverse registration
+// order and all errors are retained. Invalid arguments/options do not transfer
+// ownership and do not run cleanup. Callbacks run synchronously without a deadline;
+// they must return promptly. Forced closure cannot stop noncooperative handlers.
+func WithCleanup(cleanup func() error) Option {
+	return func(cfg *config) error {
+		if cleanup == nil {
+			return fmt.Errorf("%w: nil cleanup", ErrInvalidArgument)
+		}
+		cfg.cleanup = append(cfg.cleanup, cleanup)
+		return nil
+	}
+}
+
+// cleanupResources releases dependencies in reverse order, preserving every error.
+func cleanupResources(cfg config) error {
+	var errs []error
+	for i := len(cfg.cleanup) - 1; i >= 0; i-- {
+		if err := cfg.cleanup[i](); err != nil {
+			errs = append(errs, fmt.Errorf("service: cleanup: %w", err))
+		}
+	}
+	return errors.Join(errs...)
+}
+
 // ListenAndServe binds server.Addr and serves until the context is cancelled,
 // the server is shut down externally, or serving fails.
-func ListenAndServe(ctx context.Context, server *http.Server, options ...Option) error {
+func ListenAndServe(ctx context.Context, server *http.Server, options ...Option) (err error) {
 	if ctx == nil || server == nil {
 		return ErrInvalidArgument
 	}
@@ -69,6 +96,7 @@ func ListenAndServe(ctx context.Context, server *http.Server, options ...Option)
 	if err != nil {
 		return err
 	}
+	defer func() { err = errors.Join(err, cleanupResources(cfg)) }()
 
 	listener, err := net.Listen("tcp", server.Addr)
 	if err != nil {
@@ -81,7 +109,7 @@ func ListenAndServe(ctx context.Context, server *http.Server, options ...Option)
 // Serve runs server on an existing listener. Once called, the HTTP server owns
 // the listener. This form is useful for socket activation and deterministic
 // integration tests.
-func Serve(ctx context.Context, server *http.Server, listener net.Listener, options ...Option) error {
+func Serve(ctx context.Context, server *http.Server, listener net.Listener, options ...Option) (err error) {
 	if ctx == nil || server == nil || listener == nil {
 		return ErrInvalidArgument
 	}
@@ -90,6 +118,7 @@ func Serve(ctx context.Context, server *http.Server, listener net.Listener, opti
 	if err != nil {
 		return err
 	}
+	defer func() { err = errors.Join(err, cleanupResources(cfg)) }()
 	return serve(ctx, server, listener, cfg)
 }
 

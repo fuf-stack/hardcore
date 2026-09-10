@@ -9,6 +9,7 @@ settings:
   scope-enum:
     argument:
       - ci
+      - database
       - deps
       - docs
       - example
