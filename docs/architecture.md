@@ -37,6 +37,12 @@ never commit a temporary workspace override to make an unreleased API build.
 
 Database startup validates connectivity under a deadline and closes failed
 pools. Readiness pings compose with health checks through a caller-owned closure.
+Connection URL parsing is pure: it returns a database family and explicit DSN
+without choosing a registered driver. It preserves SQLite options and leaves
+filesystem initialization and per-driver policy to the caller. The base package
+still imports only the standard library; driver-parser compatibility tests live
+in the isolated integration module. Connection values redact their printable
+representations, and parser errors never contain raw input.
 Post-drain cleanup belongs to service, not database: it accepts arbitrary close
 callbacks and runs them in reverse order, including on bind failure. Applications
 select drivers, configure credentials, and retain ORM and migration ownership.
@@ -46,7 +52,7 @@ work understandable while the library is young. Multiple modules are justified
 only when consumers genuinely need independent release cadences.
 
 The separate `integration` module is test infrastructure, not a versioned
-foundation. It depends on the parent checkout and a PostgreSQL driver to test
+foundation. It depends on the parent checkout and MySQL/PostgreSQL drivers to test
 real connectivity and composed HTTP lifecycle behavior without adding driver
 dependencies to the library. CI exercises it independently of private consumers.
 

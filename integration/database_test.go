@@ -13,7 +13,11 @@ import (
 // openPool exercises real driver startup and registers ownership cleanup.
 func openPool(t *testing.T, url string) *sql.DB {
 	t.Helper()
-	db, err := database.Open(context.Background(), "pgx", url,
+	connection, err := database.ParseURL(url)
+	if err != nil {
+		t.Fatal(err)
+	}
+	db, err := database.Open(context.Background(), "pgx", connection.DataSourceName(),
 		database.WithPoolConfig(database.PoolConfig{MaxIdleConns: 1, MaxOpenConns: 2}),
 		database.WithStartupTimeout(3*time.Second))
 	if err != nil {

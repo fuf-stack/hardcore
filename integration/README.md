@@ -3,8 +3,9 @@
 This test-only module exercises the local library against PostgreSQL. Its local
 `replace` targets the parent checkout, so tests cover unreleased changes rather
 than a published version. It is not a separately released product package.
-The PostgreSQL driver is isolated here; the parent library remains driver-neutral
-and standard-library-only.
+MySQL and PostgreSQL drivers are isolated here; the parent database package
+remains driver-neutral and standard-library-only. MySQL is used for offline DSN
+contract validation, not a MySQL server connection.
 
 ## Running
 
@@ -25,6 +26,8 @@ Missing configuration is a failure when running Go tests directly, not a skip.
 ## Scenarios
 
 - Driver-backed startup, a SQL query, explicit pool limits, and pool closure.
+- MySQL DSN conversion and PostgreSQL URL preservation checked against the real
+  driver parsers, including encoded credentials, database names, and IPv6.
 - Real TCP connection loss and recovery through a test-owned proxy. Existing
   sessions are disconnected and new connections rejected while blocked; only
   the test's traffic is affected.
