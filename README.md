@@ -99,7 +99,10 @@ product-specific API operations remain in consuming applications. See
 
 All Go packages currently share one module version. Public exported APIs follow
 semantic versioning. Release Please prepares version PRs and GitHub releases;
-Go consumers resolve published tags directly through the module path.
+Go consumers resolve published tags directly through the module path. Root
+module tags use plain semantic versions such as `v1.0.0`, without a package-name
+prefix. The original `hardcore-v1.0.0` release is retained; its Go-compatible
+alias `v1.0.0` points to the same commit.
 
 ## License
 
