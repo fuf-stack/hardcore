@@ -12,6 +12,7 @@ set -euo pipefail
 source "$(dirname "${BASH_SOURCE[0]}")/go-env.sh"
 
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 case "${1:-}" in
   "") mode=write ;;
   --check) mode=check ;;
@@ -22,11 +23,13 @@ esac
 # Materialize Git's result so discovery errors cannot disappear in a pipeline.
 file_list="$(mktemp)"
 trap 'rm -f "$file_list"' EXIT
+
 if [[ "$mode" == staged ]]; then
   git diff --cached --name-only --diff-filter=ACMRT -z -- '*.go' > "$file_list"
 else
   git ls-files -z --cached --others --exclude-standard -- '*.go' > "$file_list"
 fi
+
 status=0
 while IFS= read -r -d '' file; do
   if [[ "$mode" == staged ]]; then
@@ -36,6 +39,7 @@ while IFS= read -r -d '' file; do
       100644\ *|100755\ *) ;;
       *) continue ;;
     esac
+
     pending="$(git show ":$file" | gofmt -s -l)"
   else
     # Deleted working-tree files and symlinks must not be formatted.
@@ -44,13 +48,16 @@ while IFS= read -r -d '' file; do
       gofmt -s -w "$file"
       continue
     fi
+
     pending="$(gofmt -s -l "$file")"
   fi
+
   if [[ -n "$pending" ]]; then
     printf '%s\n' "$file"
     status=1
   fi
 done < "$file_list"
+
 if [[ "$status" != 0 ]]; then
   if [[ "$mode" == staged ]]; then
     echo "Staged Go formatting differs; run make fmt and review what you stage before retrying." >&2
@@ -58,4 +65,5 @@ if [[ "$status" != 0 ]]; then
     echo "Go formatting differs; run make fmt." >&2
   fi
 fi
+
 exit "$status"

@@ -10,12 +10,15 @@ source "$(dirname "${BASH_SOURCE[0]}")/go-env.sh"
 # Supply HARDCORE_TEST_DATABASE_URL to use an existing test database. Otherwise
 # start a disposable PostgreSQL container; only that container is removed.
 # -----------------------------------------------------------------------------
+
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
+
 case "${1:---all}" in
   --all) pattern='Test(Integration|E2E)' ;;
   --e2e) pattern='TestE2E' ;;
   *) echo "Usage: $0 [--all | --e2e]" >&2; exit 2 ;;
 esac
+
 container=""
 cleanup() {
   if [[ -n "$container" ]]; then
@@ -25,6 +28,7 @@ cleanup() {
 trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
+
 if [[ -z "${HARDCORE_TEST_DATABASE_URL:-}" ]]; then
   postgres_tag="$(bash scripts/version.sh POSTGRES_TAG)"
   container="$(docker run --rm -d --tmpfs /var/lib/postgresql \

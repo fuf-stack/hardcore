@@ -29,4 +29,5 @@ if ! awk -v total="${TOTAL_COVERAGE}" -v minimum="${MIN_COVERAGE}" 'BEGIN { exit
   printf 'coverage %.1f%% is below the required %.1f%%\n' "${TOTAL_COVERAGE}" "${MIN_COVERAGE}" >&2
   exit 1
 fi
+
 printf 'total coverage: %.1f%% (minimum %.1f%%)\n' "${TOTAL_COVERAGE}" "${MIN_COVERAGE}"

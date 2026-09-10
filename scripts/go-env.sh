@@ -7,6 +7,7 @@
 # shell profiles or installing anything. Existing PATH entries take precedence.
 # Usage: source scripts/go-env.sh
 # -----------------------------------------------------------------------------
+
 for go_path_dir in \
   "$HOME/.asdf/shims" \
   "$HOME/.local/share/mise/shims" \
@@ -21,6 +22,7 @@ for go_path_dir in \
     esac
   fi
 done
+
 export PATH
 
 if ! command -v go >/dev/null 2>&1; then
@@ -36,7 +38,9 @@ if [[ -d "$go_root_dir/bin" ]]; then
     *) PATH="$PATH:$go_root_dir/bin" ;;
   esac
 fi
+
 export PATH
+
 if ! command -v gofmt >/dev/null 2>&1; then
   echo "gofmt is missing from the selected Go toolchain." >&2
   return 1
