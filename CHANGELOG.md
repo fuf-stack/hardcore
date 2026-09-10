@@ -15,6 +15,18 @@
 
 * require Go 1.27 and migrate health serialization to JSON v2 ([cd31f99](https://github.com/fuf-stack/hardcore/commit/cd31f99b5a074d7763b4826b6b64f2db66d2ea85))
 
+## [1.4.0](https://github.com/fuf-stack/hardcore/compare/v1.3.0...v1.4.0) (2026-09-10)
+
+
+### Features
+
+* **observability:** add trusted request IDs and log correlation ([31a1a6f](https://github.com/fuf-stack/hardcore/commit/31a1a6fd636d23ff7ed9d1f32b5d30d75c06ccf5))
+
+
+### Bug Fixes
+
+* **release:** remove temporary v1.3.0 recovery overrides ([b35fc04](https://github.com/fuf-stack/hardcore/commit/b35fc042d53170a04ff3583aad7765e52b733166))
+
 ## [1.3.0](https://github.com/fuf-stack/hardcore/compare/v2.0.0...v1.3.0) (2026-09-10)
 
 
