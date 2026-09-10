@@ -1,5 +1,27 @@
 # Changelog
 
+## [2.0.0](https://github.com/fuf-stack/hardcore/compare/v1.2.0...v2.0.0) (2026-09-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* require Go 1.27 and migrate health serialization to JSON v2
+
+### Features
+
+* **database:** add credential-safe connection URL parsing ([c9e6124](https://github.com/fuf-stack/hardcore/commit/c9e6124718a1685c92d16dc6986040500a96f553))
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/go-sql-driver/mysql to v1.10.1 ([31bb300](https://github.com/fuf-stack/hardcore/commit/31bb3001c928f78f3e88856d65ef7eb0674dc50b))
+* **deps:** update module github.com/go-sql-driver/mysql to v1.10.1 ([8f9873c](https://github.com/fuf-stack/hardcore/commit/8f9873c74674595865dd78a7802cbecfb981202b))
+
+
+### Build System
+
+* require Go 1.27 and migrate health serialization to JSON v2 ([cd31f99](https://github.com/fuf-stack/hardcore/commit/cd31f99b5a074d7763b4826b6b64f2db66d2ea85))
+
 ## [1.2.0](https://github.com/fuf-stack/hardcore/compare/v1.1.0...v1.2.0) (2026-09-10)
 
 
