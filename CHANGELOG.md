@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/fuf-stack/hardcore/compare/v1.0.0...v1.0.1) (2026-09-10)
+
+
+### Bug Fixes
+
+* **release:** use Go-compatible root module tags ([161a6cc](https://github.com/fuf-stack/hardcore/commit/161a6cc2cc622c8c3268eeddf82bbcf5927bd8f2))
+
 ## 1.0.0 (2026-09-10)
 
 
