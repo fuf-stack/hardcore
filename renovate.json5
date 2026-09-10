@@ -31,5 +31,13 @@
       matchManagers: ['gomod'],
       postUpdateOptions: ['gomodTidy'],
     },
+    {
+      // Integration tests use the parent checkout via replace; keep its placeholder.
+      // Scope this exception narrowly so real driver dependencies still update.
+      enabled: false,
+      matchFileNames: ['integration/go.mod'],
+      matchManagers: ['gomod'],
+      matchPackageNames: ['github.com/fuf-stack/hardcore'],
+    },
   ],
 }
