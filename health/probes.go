@@ -2,7 +2,8 @@ package health
 
 import (
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"maps"
@@ -266,6 +267,6 @@ func probeHandler(report func(context.Context) (Report, int)) http.Handler {
 		if request.Method == http.MethodHead {
 			return
 		}
-		_ = json.NewEncoder(writer).Encode(body)
+		_ = json.MarshalEncode(jsontext.NewEncoder(writer), body)
 	})
 }

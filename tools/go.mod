@@ -1,6 +1,6 @@
 module github.com/fuf-stack/hardcore/tools
 
-go 1.26.0
+go 1.27.0
 
 require (
 	github.com/conventionalcommit/commitlint v0.12.0

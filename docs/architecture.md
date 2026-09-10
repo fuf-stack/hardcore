@@ -82,3 +82,10 @@ Hardcore must not contain:
 Small generic types can still reveal a private design when assembled together.
 Review the combined architecture, examples, fixtures, and documentation—not
 only individual identifiers—before publishing an extraction.
+## Go 1.27 and JSON
+
+The module requires Go 1.27. Handwritten serialization uses `encoding/json/v2`.
+Health responses retain their newline and existing omission behavior.
+
+Generated code and framework-owned serialization remain unchanged. This is not
+a claim that every third-party HTTP or RPC encoder uses the same JSON options.
