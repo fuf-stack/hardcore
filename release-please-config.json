@@ -1,11 +1,9 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "include-component-in-tag": false,
-  "last-release-sha": "67b360a0503ade19d1cb3615f6ddec624308cce9",
   "packages": {
     ".": {
-      "package-name": "hardcore",
-      "release-as": "1.3.0"
+      "package-name": "hardcore"
     }
   },
   "pull-request-title-pattern": "chore(release): release${component} ${version}",
