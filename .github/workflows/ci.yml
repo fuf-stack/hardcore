@@ -59,8 +59,6 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 10
-    env:
-      HARDCORE_TEST_DATABASE_URL: postgres://postgres:integration-test-only@127.0.0.1:${{ job.services.postgres.ports[5432] }}/postgres?sslmode=disable
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-go@v7
@@ -76,4 +74,6 @@ jobs:
           git diff --exit-code HEAD -- integration/go.mod integration/go.sum
           test -z "$(git ls-files --others --exclude-standard -- integration/go.mod integration/go.sum)"
       - name: Run integration and end-to-end tests
+        env:
+          HARDCORE_TEST_DATABASE_URL: postgres://postgres:integration-test-only@127.0.0.1:${{ job.services.postgres.ports['5432'] }}/postgres?sslmode=disable
         run: make test-integration
