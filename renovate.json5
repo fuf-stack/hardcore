@@ -1,4 +1,15 @@
 {
+  customManagers: [
+    {
+      customType: 'regex',
+      description: 'Update centralized CI and tooling versions',
+      managerFilePatterns: ['/^versions\\.yaml$/'],
+      matchStrings: [
+        '# renovate: datasource=(?<datasource>\\S+) depName=(?<depName>\\S+)(?: versioning=(?<versioning>\\S+))?\\n\\s+[A-Z][A-Z0-9_]*: "(?<currentValue>[^"\\n]+)"',
+      ],
+      versioningTemplate: '{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}',
+    },
+  ],
   dependencyDashboardLabels: ['effort | ongoing', 'scope | dependencies'],
   dependencyDashboardOSVVulnerabilitySummary: 'all',
   extends: [

@@ -14,4 +14,5 @@ cd "$(git rev-parse --show-toplevel)"
 bash scripts/format.sh --staged
 
 # Full lint checks working-tree formatting; hooks intentionally check the index only.
-make vet test
+bash scripts/run-lint.sh
+make test

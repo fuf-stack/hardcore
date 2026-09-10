@@ -26,8 +26,9 @@ trap cleanup EXIT
 trap 'exit 130' INT
 trap 'exit 143' TERM
 if [[ -z "${HARDCORE_TEST_DATABASE_URL:-}" ]]; then
+  postgres_tag="$(bash scripts/version.sh POSTGRES_TAG)"
   container="$(docker run --rm -d --tmpfs /var/lib/postgresql \
-    -e POSTGRES_PASSWORD=integration-test-only -p 127.0.0.1::5432 postgres:18)"
+    -e POSTGRES_PASSWORD=integration-test-only -p 127.0.0.1::5432 "postgres:$postgres_tag")"
   ready=false
   for ((attempt=0; attempt<30; attempt++)); do
     if docker exec "$container" pg_isready -h 127.0.0.1 -U postgres >/dev/null 2>&1; then

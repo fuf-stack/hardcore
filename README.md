@@ -62,7 +62,8 @@ make check
 make run-example
 ```
 
-`make check` verifies formatting, runs `go vet`, and executes the test suite
+`make check` verifies formatting, runs pinned repo-local golangci-lint (including
+explicit `govet`), and executes the test suite
 with the race detector. Tests use the version of `gotestsum` pinned in
 [`tools/go.mod`](./tools/go.mod) and force colored, test-name-oriented output.
 The pinned version always runs through `go run`, regardless of binaries on PATH.
@@ -103,7 +104,7 @@ locations when GUI clients provide a minimal PATH. They preserve existing PATH
 precedence and do not source shell profiles or install tools during commits.
 
 The pre-commit hook checks the staged versions of Go files for formatting, then
-runs `make vet test` against the working tree (including unstaged edits). It
+runs the repo-local linter and `make test` against the working tree (including unstaged edits). It
 does not format files, stash edits, or change staging. Fix reported formatting
 and review what you stage before retrying. Run it manually with `make lint-staged`.
 

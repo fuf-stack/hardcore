@@ -1,0 +1,25 @@
+# =============================================================================
+# Hardcore project versions
+# =============================================================================
+# Single source of truth for CI toolchain, standalone tooling, and test images.
+# Consumed by scripts/version.sh and CI; updated by Renovate's regex manager.
+# Module dependencies (including Go-based tools) remain managed in go.mod files.
+# The Go CI toolchain below is separate from each module's minimum Go version.
+# GitHub Action references remain managed by Renovate's native Actions manager.
+# =============================================================================
+
+variables:
+  # Linter release used by local checks and CI.
+  # releases: https://github.com/golangci/golangci-lint/releases
+  # renovate: datasource=github-releases depName=golangci/golangci-lint
+  GOLANGCI_LINT_TAG: "v2.13.1"
+
+  # Go toolchain used by CI jobs.
+  # releases: https://go.dev/doc/devel/release
+  # renovate: datasource=golang-version depName=go versioning=go
+  GO_VERSION: "1.27.0"
+
+  # PostgreSQL image tag used by local and CI integration tests.
+  # releases: https://www.postgresql.org/docs/release/
+  # renovate: datasource=docker depName=postgres versioning=docker
+  POSTGRES_TAG: "18"

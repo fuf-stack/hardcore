@@ -42,7 +42,11 @@ func TestServeShutsDownAfterCancellation(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GET service: %v", err)
 	}
-	defer response.Body.Close()
+	t.Cleanup(func() {
+		if err := response.Body.Close(); err != nil {
+			t.Error(err)
+		}
+	})
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("status = %d, want %d", response.StatusCode, http.StatusOK)
 	}
@@ -147,7 +151,7 @@ func TestServeReturnsListenerFailure(t *testing.T) {
 func TestOptionsRejectInvalidValues(t *testing.T) {
 	server := &http.Server{}
 	listener := listen(t)
-	defer listener.Close()
+	t.Cleanup(func() { _ = listener.Close() }) // The serving path may already close it.
 
 	if err := service.Serve(context.Background(), server, listener, service.WithShutdownTimeout(0)); !errors.Is(err, service.ErrInvalidShutdownTimeout) {
 		t.Fatalf("timeout error = %v, want ErrInvalidShutdownTimeout", err)
@@ -192,7 +196,7 @@ func TestShutdownHookErrorDoesNotPreventShutdown(t *testing.T) {
 // reported synchronously with its underlying bind error intact.
 func TestListenAndServeReturnsBindFailure(t *testing.T) {
 	listener := listen(t)
-	defer listener.Close()
+	t.Cleanup(func() { _ = listener.Close() }) // The serving path may already close it.
 
 	server := &http.Server{Addr: listener.Addr().String()}
 	if err := service.ListenAndServe(context.Background(), server); err == nil {
@@ -215,7 +219,7 @@ func TestListenAndServeStopsOnCancelledContext(t *testing.T) {
 // TestListenAndServeRejectsInvalidValues verifies that invalid arguments and
 // options are rejected before an address is bound.
 func TestListenAndServeRejectsInvalidValues(t *testing.T) {
-	if err := service.ListenAndServe(nil, &http.Server{}); !errors.Is(err, service.ErrInvalidArgument) {
+	if err := service.ListenAndServe(nil, &http.Server{}); !errors.Is(err, service.ErrInvalidArgument) { //nolint:staticcheck // Exercise the documented nil-context rejection.
 		t.Fatalf("argument error = %v, want ErrInvalidArgument", err)
 	}
 	if err := service.ListenAndServe(context.Background(), &http.Server{}, service.WithShutdownTimeout(0)); !errors.Is(err, service.ErrInvalidShutdownTimeout) {
@@ -348,7 +352,7 @@ func TestServePreservesFailureDuringShutdown(t *testing.T) {
 // TestServeRejectsMissingArguments verifies that required lifecycle ownership
 // inputs are validated instead of causing a nil dereference in a goroutine.
 func TestServeRejectsMissingArguments(t *testing.T) {
-	if err := service.Serve(nil, &http.Server{}, nil); !errors.Is(err, service.ErrInvalidArgument) {
+	if err := service.Serve(nil, &http.Server{}, nil); !errors.Is(err, service.ErrInvalidArgument) { //nolint:staticcheck // Exercise the documented nil-context rejection.
 		t.Fatalf("argument error = %v, want ErrInvalidArgument", err)
 	}
 }

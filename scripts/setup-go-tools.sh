@@ -11,6 +11,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/go-env.sh"
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 echo "Preparing pinned Go tools..."
+bash scripts/setup-lint.sh
 go run -mod=readonly -modfile=tools/go.mod github.com/conventionalcommit/commitlint --version
 go run -mod=readonly -modfile=tools/go.mod gotest.tools/gotestsum --version
 

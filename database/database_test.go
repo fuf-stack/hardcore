@@ -217,7 +217,7 @@ func TestReadinessRecoversAndHidesErrors(t *testing.T) {
 
 // TestReadinessInvalidInputAndCancellation keeps nil pools and cancelled checks unready.
 func TestReadinessInvalidInputAndCancellation(t *testing.T) {
-	if !errors.Is(CheckReadiness(nil, nil), ErrInvalidArgument) {
+	if !errors.Is(CheckReadiness(nil, nil), ErrInvalidArgument) { //nolint:staticcheck // Exercise the documented nil-context rejection.
 		t.Fatal("nil context accepted")
 	}
 	if !errors.Is(CheckReadiness(context.Background(), nil), ErrUnavailable) {

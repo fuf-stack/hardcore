@@ -1,5 +1,5 @@
 .PHONY: default build check fmt fmt-check install lint lint-staged run-example \
-        setup setup-go-tools test test-e2e test-integration test-race vet
+        setup setup-go-tools setup-lint test test-e2e test-integration test-race
 
 GO ?= go
 .DEFAULT_GOAL := default
@@ -26,8 +26,9 @@ fmt-check:
 install: setup
 	bash -c 'source scripts/go-env.sh; $(MAKE) build'
 
-# Verify formatting and run Go's static analysis.
-lint: fmt-check vet
+# Verify formatting and run the explicit lint baseline, including govet.
+lint: fmt-check setup-lint
+	bash scripts/run-lint.sh
 
 # Check staged Go formatting, then lint and test the working tree.
 lint-staged:
@@ -45,6 +46,10 @@ setup: setup-go-tools
 setup-go-tools:
 	bash scripts/setup-go-tools.sh
 
+# Install the pinned linter without configuring hooks or other tools.
+setup-lint:
+	bash scripts/setup-lint.sh
+
 # Main test entrypoint, with colored output, race detection, and coverage.
 test:
 	./scripts/test.sh
@@ -60,7 +65,3 @@ test-integration:
 # Preserve the explicit race-test target used by existing workflows.
 test-race:
 	./scripts/test.sh
-
-# Run focused static analysis without checking working-tree formatting.
-vet:
-	$(GO) vet ./...

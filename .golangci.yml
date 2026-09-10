@@ -1,0 +1,22 @@
+version: "2"
+
+# Choose the enabled linters here instead of inheriting the upstream preset.
+# This keeps linter additions/removals intentional when upgrading golangci-lint;
+# checks within each linter can still evolve with the pinned tool version.
+# Using the standard default preset is valid too, but delegates that selection
+# to upstream rather than documenting our baseline in this repository.
+linters:
+  # Start empty, then enable exactly the alphabetized list below.
+  default: none
+  enable:
+    # Report unchecked errors returned by function calls.
+    - errcheck
+    # Find suspicious Go constructs, such as printf mismatches and copied locks.
+    # Use govet's normal analyzer set, not every optional analyzer.
+    - govet
+    # Find assignments whose values are never used.
+    - ineffassign
+    # Detect bugs, deprecated API use, and simplifiable code with static analysis.
+    - staticcheck
+    # Find unused declarations.
+    - unused
