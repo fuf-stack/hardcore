@@ -84,9 +84,14 @@ Go cannot forcibly interrupt arbitrary application code.
 ## Commit conventions
 
 Run `make setup` (or `make setup-go-tools`) after cloning to activate the
-repository-managed `.commitlint/hooks/commit-msg` hook. Tools are pinned in
+repository-managed hooks in `.commitlint/hooks`. Tools are pinned in
 `tools/go.mod` and executed through `go run`; no global installation is needed.
 Setup preserves an existing custom hook path and asks you to integrate it.
+
+The pre-commit hook checks the staged versions of Go files for formatting, then
+runs `make lint test` against the working tree (including unstaged edits). It
+does not format files, stash edits, or change staging. Fix reported formatting
+and review what you stage before retrying. Run it manually with `make lint-staged`.
 
 The shared configuration in `.commitlint.yaml` validates local commits and PR
 titles in CI. Scopes are optional; when present, use one of:

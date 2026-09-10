@@ -17,5 +17,5 @@ if [[ -n "$CURRENT_HOOKS_PATH" && "$CURRENT_HOOKS_PATH" != '.commitlint/hooks' ]
   exit 1
 fi
 git config --local core.hooksPath .commitlint/hooks
-chmod +x .commitlint/hooks/commit-msg
+chmod +x .commitlint/hooks/commit-msg .commitlint/hooks/pre-commit
 echo "Tool setup complete."

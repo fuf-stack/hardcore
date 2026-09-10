@@ -1,4 +1,4 @@
-.PHONY: default build check fmt fmt-check lint run-example \
+.PHONY: default build check fmt fmt-check lint lint-staged run-example \
         setup setup-go-tools test test-race vet
 
 GO ?= go
@@ -30,6 +30,10 @@ fmt-check:
 # Run Go's static analysis.
 lint:
 	$(GO) vet ./...
+
+# Check staged Go formatting, then lint and test the working tree.
+lint-staged:
+	bash scripts/lint-staged.sh
 
 # Run the example application locally.
 run-example:

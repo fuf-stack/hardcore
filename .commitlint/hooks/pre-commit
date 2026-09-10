@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Check staged formatting and run the repository's lint and test targets.
+exec bash scripts/lint-staged.sh
