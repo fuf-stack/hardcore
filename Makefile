@@ -1,5 +1,5 @@
-.PHONY: default build check fmt fmt-check lint lint-staged run-example \
-        setup setup-go-tools test test-race vet
+.PHONY: default build check fmt fmt-check install lint lint-staged run-example \
+        setup setup-go-tools test test-e2e test-integration test-race vet
 
 GO ?= go
 .DEFAULT_GOAL := default
@@ -21,6 +21,10 @@ fmt:
 # Fail on formatting drift without modifying files.
 fmt-check:
 	bash scripts/format.sh --check
+
+# Prepare development tools and hooks, then compile the library and example.
+install: setup
+	bash -c 'source scripts/go-env.sh; $(MAKE) build'
 
 # Verify formatting and run Go's static analysis.
 lint: fmt-check vet
@@ -44,6 +48,14 @@ setup-go-tools:
 # Main test entrypoint, with colored output, race detection, and coverage.
 test:
 	./scripts/test.sh
+
+# Run the HTTP/database lifecycle end-to-end scenario against PostgreSQL.
+test-e2e:
+	bash scripts/test-integration.sh --e2e
+
+# Run real PostgreSQL integration and end-to-end tests in the isolated test module.
+test-integration:
+	bash scripts/test-integration.sh --all
 
 # Preserve the explicit race-test target used by existing workflows.
 test-race:

@@ -31,6 +31,11 @@ The Go packages share one module version. This keeps compatibility and release
 work understandable while the library is young. Multiple modules are justified
 only when consumers genuinely need independent release cadences.
 
+The separate `integration` module is test infrastructure, not a versioned
+foundation. It depends on the parent checkout and a PostgreSQL driver to test
+real connectivity and composed HTTP lifecycle behavior without adding driver
+dependencies to the library. CI exercises it independently of private consumers.
+
 ## Candidate extraction areas
 
 These are directions, not promised packages:

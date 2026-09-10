@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# GUI Git clients do not inherit the terminal's Go toolchain PATH.
+source "$(dirname "${BASH_SOURCE[0]}")/go-env.sh"
+
 # -----------------------------------------------------------------------------
 # Install the pinned development tools into the Go build cache and configure
 # repository-managed hooks. Run with: make setup-go-tools

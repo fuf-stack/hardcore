@@ -67,6 +67,12 @@ with the race detector. Tests use the version of `gotestsum` pinned in
 The pinned version always runs through `go run`, regardless of binaries on PATH.
 The suite enforces at least 95% total statement coverage.
 
+Real PostgreSQL integration and HTTP lifecycle tests live in
+[`integration`](./integration), isolated from library dependencies. Run
+`make test-integration` (all scenarios) or `make test-e2e` (HTTP lifecycle only).
+These commands use a disposable database unless `HARDCORE_TEST_DATABASE_URL`
+is set. CI runs the full suite separately from the unit coverage gate.
+
 Serving failures, cancellation, and external shutdown all run shutdown hooks and
 drain active HTTP requests before returning. Hooks must respect their shared
 shutdown context. Readiness rechecks its gate after dependency checks finish;
@@ -84,10 +90,16 @@ Go cannot forcibly interrupt arbitrary application code.
 
 ## Commit conventions
 
-Run `make setup` (or `make setup-go-tools`) after cloning to activate the
+Run `make install` after cloning to prepare tools, activate hooks, and build the
+library and example without installing a global example binary.
+Run `make setup` (or `make setup-go-tools`) for setup alone to activate the
 repository-managed hooks in `.commitlint/hooks`. Tools are pinned in
 `tools/go.mod` and executed through `go run`; no global installation is needed.
 Setup preserves an existing custom hook path and asks you to integrate it.
+
+Hook scripts discover Go and `gofmt` in standard Go, Homebrew, asdf, and mise
+locations when GUI clients provide a minimal PATH. They preserve existing PATH
+precedence and do not source shell profiles or install tools during commits.
 
 The pre-commit hook checks the staged versions of Go files for formatting, then
 runs `make vet test` against the working tree (including unstaged edits). It

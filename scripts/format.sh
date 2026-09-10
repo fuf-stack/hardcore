@@ -8,6 +8,9 @@
 # --staged checks only the index; unstaged edits are never included.
 set -euo pipefail
 
+# GUI Git clients do not inherit the terminal's Go toolchain PATH.
+source "$(dirname "${BASH_SOURCE[0]}")/go-env.sh"
+
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 case "${1:-}" in
   "") mode=write ;;

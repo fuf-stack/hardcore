@@ -16,5 +16,6 @@ Prioritize concrete defects over style commentary:
 - tests that skip failure, cancellation, timeout, or concurrency behavior;
 - release, workflow, permission, credential, or provenance weaknesses.
 
-Expect `make check` to be the definition of done. Keep comments actionable and
-cite the exact path and failure mode.
+Expect `make check` and, for database or lifecycle changes,
+`make test-integration` to pass. Keep comments actionable and cite the exact
+path and failure mode.

@@ -39,15 +39,21 @@ request and update `docs/architecture.md` in the same change.
   for existing packages or repository concerns; release automation uses `release`.
 - Keep Makefile targets ordered and document each target with a purpose comment.
   Developer setup uses `make setup-go-tools` and `.commitlint/hooks`.
+  `make install` runs setup and builds the library/example. Hook scripts source
+  `scripts/go-env.sh` to support GUI clients without loading shell profiles.
 - Alphabetize unordered lists and configuration keys, including allowed types
   and scopes. Preserve order when it affects behavior or expresses a sequence.
 - Use YAML block lists (`- item`), one entry per line, rather than inline arrays.
 - Keep the repository as one Go module until independently versioned modules
   solve an observed release problem.
+  The `integration` module is test-only: it isolates real-driver dependencies
+  and uses the parent checkout, without creating another public release unit.
 
 ## Verification
 
 - Run focused tests while iterating and `make check` before review.
+- Run `make test-integration` for database or lifecycle changes. Its isolated
+  test module covers PostgreSQL and a composed HTTP end-to-end scenario.
 - Formatting uses `gofmt -s` consistently. `make lint` includes the non-mutating
   `fmt-check` gate; hooks check index contents without rewriting or re-staging.
 - Run the normal suite through `make test` so the pinned, colored `gotestsum`
