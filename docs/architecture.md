@@ -12,14 +12,14 @@ cmd/example
   ├── health
   └── service
 
-database    health    service
-   │          │         │
-   └──────────┴─────────┴── Go standard library
+database    health    observability    service
+   │          │            │             │
+   └──────────┴────────────┴─────────────┴── Go standard library
 
 rpc ── Connect ── Protobuf
 ```
 
-`database`, `health`, and `service` are independent foundations. The example application
+`database`, `health`, `observability`, and `service` are independent foundations. The example application
 composes them by using a service shutdown hook to close its readiness gate.
 No production package depends on another foundation package.
 
@@ -55,6 +55,15 @@ The separate `integration` module is test infrastructure, not a versioned
 foundation. It depends on the parent checkout and MySQL/PostgreSQL drivers to test
 real connectivity and composed HTTP lifecycle behavior without adding driver
 dependencies to the library. CI exercises it independently of private consumers.
+
+`observability` is an independent, standard-library-only foundation for HTTP
+request IDs and context-aware slog enrichment. It addresses the gap between
+request identifiers and application logs without coupling to a router or sink.
+Proxy trust is explicit and based on the direct peer; forwarded headers cannot
+establish trust. Applications own network policy, logger installation, outgoing
+propagation, diagnostic fields, and eventual tracing/exporter configuration.
+Consumer adoption follows a published release; this addition does not change
+existing applications automatically.
 
 ## Candidate extraction areas
 
