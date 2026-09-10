@@ -1,12 +1,5 @@
 # Changelog
 
-## [2.0.0](https://github.com/fuf-stack/hardcore/compare/v1.2.0...v2.0.0) (2026-09-10)
-
-
-### ⚠ BREAKING CHANGES
-
-* require Go 1.27 and migrate health serialization to JSON v2
-
 ### Features
 
 * **database:** add credential-safe connection URL parsing ([c9e6124](https://github.com/fuf-stack/hardcore/commit/c9e6124718a1685c92d16dc6986040500a96f553))
