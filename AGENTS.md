@@ -80,3 +80,12 @@ request and update `docs/architecture.md` in the same change.
 - Record material AI assistance and manual verification in the pull request.
 - Never expose credentials, private fixtures, customer data, or private product
   source in prompts, tests, examples, issues, or generated documentation.
+# Modern Go
+
+- Follow the language version in each module's `go.mod`, not the installed toolchain.
+- Prefer `any`, `errors.AsType`, `maps`, `min`/`max`, `new(value)`, and `slices` where they simplify equivalent code.
+- Prefer integer ranges and streaming string iterators when no index or materialized slice is needed.
+- Remove redundant loop-variable captures. Use `t.Context()` for test-lifetime work, preserving explicit cancellation and deadline scenarios.
+- Use `WaitGroup.Go` only when its lifetime and panic contract match the work.
+- Review `go fix -diff` suggestions; do not auto-fix or stage code in commit hooks. Do not edit generated code.
+- Treat JSON encoder and omission-tag changes as contract migrations with wire tests. Do not enable experimental JSON or raise the Go baseline implicitly.

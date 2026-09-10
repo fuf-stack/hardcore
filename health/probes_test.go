@@ -186,8 +186,7 @@ func TestReadinessGateClosesDuringCheck(t *testing.T) {
 	}
 	probes.SetReady(true)
 	result := make(chan health.Report, 1)
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	ctx := t.Context()
 	go func() { result <- probes.CheckReadiness(ctx) }()
 	select {
 	case <-started:

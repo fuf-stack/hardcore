@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"maps"
 	"net/http"
 	"strings"
 	"sync"
@@ -248,11 +249,7 @@ func (p *Probes) snapshot() map[string]*checkState {
 	p.mu.RLock()
 	defer p.mu.RUnlock()
 
-	checks := make(map[string]*checkState, len(p.checks))
-	for name, check := range p.checks {
-		checks[name] = check
-	}
-	return checks
+	return maps.Clone(p.checks)
 }
 
 func probeHandler(report func(context.Context) (Report, int)) http.Handler {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"net"
 	"net/http"
-	"reflect"
+	"slices"
 	"testing"
 
 	"github.com/fuf-stack/hardcore/service"
@@ -23,7 +23,7 @@ func TestCleanupOnBindFailure(t *testing.T) {
 	if !errors.Is(err, closeErr) || !errors.As(err, &addrErr) {
 		t.Fatalf("lost errors: %v", err)
 	}
-	if !reflect.DeepEqual(calls, []int{2, 1}) {
+	if !slices.Equal(calls, []int{2, 1}) {
 		t.Fatalf("cleanup order: %v", calls)
 	}
 }
@@ -41,7 +41,7 @@ func TestCleanupAfterCancellation(t *testing.T) {
 	if !errors.Is(err, hookErr) || !errors.Is(err, closeErr) {
 		t.Fatalf("lost errors: %v", err)
 	}
-	if !reflect.DeepEqual(calls, []string{"hook", "cleanup"}) {
+	if !slices.Equal(calls, []string{"hook", "cleanup"}) {
 		t.Fatalf("order: %v", calls)
 	}
 }

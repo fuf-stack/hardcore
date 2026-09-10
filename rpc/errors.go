@@ -19,8 +19,7 @@ func NormalizeError(err error) error {
 	if err == nil {
 		return nil
 	}
-	var wire *connect.Error
-	if errors.As(err, &wire) && wire != nil {
+	if wire, ok := errors.AsType[*connect.Error](err); ok && wire != nil {
 		switch wire.Code() {
 		case connect.CodeInternal, connect.CodeUnknown:
 			return connect.NewError(wire.Code(), errors.New("internal error"))
