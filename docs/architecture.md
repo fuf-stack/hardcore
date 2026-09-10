@@ -15,11 +15,25 @@ cmd/example
 database    health    service
    │          │         │
    └──────────┴─────────┴── Go standard library
+
+rpc ── Connect ── Protobuf
 ```
 
 `database`, `health`, and `service` are independent foundations. The example application
 composes them by using a service shutdown hook to close its readiness gate.
 No production package depends on another foundation package.
+
+`rpc` independently depends on Connect and its Protobuf dependency. This is the
+first third-party runtime dependency: the public contract uses Connect errors
+and interceptors directly rather than introducing a parallel status abstraction.
+The other foundations retain their standard-library-only imports. Consumers
+that do not import `rpc` do not link Connect into their binaries.
+
+The concrete extraction is a unary error boundary: repeated transport handlers
+were wrapping unexpected storage and authorization-check failures with raw error
+messages. Normalization removes internal diagnostics while leaving domain status
+classification in the consumer. Consumer adoption follows the package release;
+never commit a temporary workspace override to make an unreleased API build.
 
 Database startup validates connectivity under a deadline and closes failed
 pools. Readiness pings compose with health checks through a caller-owned closure.

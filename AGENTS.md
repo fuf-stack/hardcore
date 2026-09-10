@@ -9,6 +9,7 @@ architecture.
 - `database` owns driver-neutral SQL pool startup, configuration, and readiness.
 
 - `health` owns HTTP liveness/readiness behavior and dependency checks.
+- `rpc` owns Connect unary server error normalization, not domain classification.
 - `service` owns process-serving and graceful-shutdown behavior.
 - `cmd/example` demonstrates composition and may depend on every public package.
 - Public library packages must not depend on `cmd`, examples, or a consumer.

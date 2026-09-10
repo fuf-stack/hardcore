@@ -15,6 +15,7 @@ settings:
       - example
       - health
       - release
+      - rpc
       - service
       - tooling
     flags:

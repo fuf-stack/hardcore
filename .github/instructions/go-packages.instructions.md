@@ -1,5 +1,5 @@
 ---
-applyTo: '{database,health,service}/**/*.go'
+applyTo: '{database,health,rpc,service}/**/*.go'
 ---
 
 Treat every exported identifier and observable behavior as public API. Prefer

@@ -15,10 +15,11 @@ as normal Go packages.
 | --- | --- |
 | [`database`](./database) | Bounded SQL startup, pool configuration, and readiness checks |
 | [`health`](./health) | Liveness and readiness probes with bounded dependency checks |
+| [`rpc`](./rpc) | Safe Connect unary server error boundaries |
 | [`service`](./service) | HTTP serving, graceful shutdown, and post-drain resource cleanup |
 
 The foundations cover process lifecycle, health, and driver-neutral SQL pool
-lifecycle. RPC conventions, queries, authentication mechanisms, shared
+lifecycle and unary RPC error boundaries. Further RPC conventions, queries, authentication mechanisms, shared
 contracts, and test infrastructure will be extracted only when a real consumer
 gives us a concrete API to design.
 
@@ -115,7 +116,7 @@ The shared configuration in `.commitlint.yaml` validates local commits and PR
 titles in CI. Scopes are optional; when present, use one of:
 
 ```text
-ci, deps, docs, example, health, release, service, tooling
+ci, database, deps, docs, example, health, release, rpc, service, tooling
 ```
 
 For example, `fix(health): handle dependency timeouts` or
