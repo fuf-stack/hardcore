@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0](https://github.com/fuf-stack/hardcore/compare/v1.1.0...v1.2.0) (2026-09-10)
+
+
+### Features
+
+* **rpc:** add safe unary server error boundaries ([60b8a3e](https://github.com/fuf-stack/hardcore/commit/60b8a3e3d49e3fefec4a62521b805be6e4713b88))
+
+
+### Bug Fixes
+
+* **deps:** update module google.golang.org/protobuf to v1.36.12 ([00f0ede](https://github.com/fuf-stack/hardcore/commit/00f0ededc7ca952e7cfa532f9316e1e8cca1582c))
+* **deps:** update module google.golang.org/protobuf to v1.36.12 ([21b1fc9](https://github.com/fuf-stack/hardcore/commit/21b1fc9f8d1c2523085a8a50196e37e87cfc8ee1))
+
 ## [1.1.0](https://github.com/fuf-stack/hardcore/compare/v1.0.1...v1.1.0) (2026-09-10)
 
 
