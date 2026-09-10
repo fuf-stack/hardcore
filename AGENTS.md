@@ -46,6 +46,8 @@ request and update `docs/architecture.md` in the same change.
 ## Verification
 
 - Run focused tests while iterating and `make check` before review.
+- Formatting uses `gofmt -s` consistently. `make lint` includes the non-mutating
+  `fmt-check` gate; hooks check index contents without rewriting or re-staging.
 - Run the normal suite through `make test` so the pinned, colored `gotestsum`
   output remains consistent locally and in CI.
 - Tests must cover cancellation, timeouts, error paths, and concurrency when the

@@ -89,9 +89,14 @@ repository-managed hooks in `.commitlint/hooks`. Tools are pinned in
 Setup preserves an existing custom hook path and asks you to integrate it.
 
 The pre-commit hook checks the staged versions of Go files for formatting, then
-runs `make lint test` against the working tree (including unstaged edits). It
+runs `make vet test` against the working tree (including unstaged edits). It
 does not format files, stash edits, or change staging. Fix reported formatting
 and review what you stage before retrying. Run it manually with `make lint-staged`.
+
+`make fmt` applies `gofmt -s` to repository Go files, including tools and
+integration tests, without installing developer tools. `make fmt-check` checks
+the same files without writing and fails on formatter errors. Both `make lint`
+and CI's `make check` include this gate; staged checks use the same rules.
 
 The shared configuration in `.commitlint.yaml` validates local commits and PR
 titles in CI. Scopes are optional; when present, use one of:

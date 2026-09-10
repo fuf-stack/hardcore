@@ -12,24 +12,18 @@ build:
 	$(GO) build ./...
 
 # Verify formatting, static analysis, race tests, and coverage.
-check: fmt-check lint test-race
+check: lint test-race
 
-# Format all Go code.
+# Format all repository Go files without installing developer tools.
 fmt:
-	$(GO) fmt ./...
+	bash scripts/format.sh
 
 # Fail on formatting drift without modifying files.
 fmt-check:
-	@files="$$(gofmt -l .)"; \
-	if [ -n "$$files" ]; then \
-		echo "The following files need gofmt:"; \
-		echo "$$files"; \
-		exit 1; \
-	fi
+	bash scripts/format.sh --check
 
-# Run Go's static analysis.
-lint:
-	$(GO) vet ./...
+# Verify formatting and run Go's static analysis.
+lint: fmt-check vet
 
 # Check staged Go formatting, then lint and test the working tree.
 lint-staged:
@@ -55,5 +49,6 @@ test:
 test-race:
 	./scripts/test.sh
 
-# Preserve the explicit vet target for focused verification.
-vet: lint
+# Run focused static analysis without checking working-tree formatting.
+vet:
+	$(GO) vet ./...

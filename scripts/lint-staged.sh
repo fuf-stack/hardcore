@@ -8,13 +8,7 @@ set -euo pipefail
 # -----------------------------------------------------------------------------
 cd "$(git rev-parse --show-toplevel)"
 
-git diff --cached --name-only --diff-filter=ACMR -z -- '*.go' |
-  while IFS= read -r -d '' file; do
-    formatting=$(git show ":${file}" | gofmt -l)
-    if [[ -n "$formatting" ]]; then
-      printf 'Staged Go file needs gofmt: %s\nFormat it and review what you stage before retrying.\n' "$file" >&2
-      exit 1
-    fi
-  done
+bash scripts/format.sh --staged
 
-make lint test
+# Full lint checks working-tree formatting; hooks intentionally check the index only.
+make vet test
