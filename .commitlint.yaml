@@ -1,0 +1,33 @@
+formatter: default
+min-version: v0.12.0
+rules:
+  - description-empty
+  - scope-enum
+  - type-enum
+settings:
+  description-empty: {}
+  scope-enum:
+    argument:
+      - ci
+      - deps
+      - docs
+      - example
+      - health
+      - release
+      - service
+      - tooling
+    flags:
+      allow-empty: true
+  type-enum:
+    argument:
+      - build
+      - chore
+      - ci
+      - docs
+      - feat
+      - fix
+      - perf
+      - refactor
+      - revert
+      - style
+      - test

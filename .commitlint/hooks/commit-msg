@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Repository-managed hook; uses the tool pinned in tools/go.mod.
+exec bash scripts/commitlint.sh --message "$1"

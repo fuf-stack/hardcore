@@ -33,6 +33,13 @@ request and update `docs/architecture.md` in the same change.
 - Preserve API behavior unless a breaking release and migration are explicit.
 - Use conventional commits. Release Please owns normal version and changelog
   updates; do not hand-edit them for routine changes.
+- `.commitlint.yaml` defines allowed types and optional scopes. Add scopes only
+  for existing packages or repository concerns; release automation uses `release`.
+- Keep Makefile targets ordered and document each target with a purpose comment.
+  Developer setup uses `make setup-go-tools` and `.commitlint/hooks`.
+- Alphabetize unordered lists and configuration keys, including allowed types
+  and scopes. Preserve order when it affects behavior or expresses a sequence.
+- Use YAML block lists (`- item`), one entry per line, rather than inline arrays.
 - Keep the repository as one Go module until independently versioned modules
   solve an observed release problem.
 
@@ -53,6 +60,9 @@ request and update `docs/architecture.md` in the same change.
 
 ## AI-assisted work
 
+- Never create or amend commits unless the user explicitly asks for that action.
+  Requests to implement, fix, or review changes do not authorize committing.
+  Leave edits uncommitted for the user to review and commit.
 - Read the nearest `AGENTS.md` before editing.
 - Treat generated suggestions as untrusted until tests and public API review
   confirm them.

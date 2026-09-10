@@ -4,4 +4,7 @@
 // and CI workflows without adding them to Hardcore's runtime module.
 package tools
 
-import _ "gotest.tools/gotestsum"
+import (
+	_ "github.com/conventionalcommit/commitlint"
+	_ "gotest.tools/gotestsum"
+)

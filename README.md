@@ -81,6 +81,31 @@ The shutdown deadline is cooperative: hooks run synchronously and must return
 when their context expires. A stuck hook can prevent HTTP shutdown from starting.
 Go cannot forcibly interrupt arbitrary application code.
 
+## Commit conventions
+
+Run `make setup` (or `make setup-go-tools`) after cloning to activate the
+repository-managed `.commitlint/hooks/commit-msg` hook. Tools are pinned in
+`tools/go.mod` and executed through `go run`; no global installation is needed.
+Setup preserves an existing custom hook path and asks you to integrate it.
+
+The shared configuration in `.commitlint.yaml` validates local commits and PR
+titles in CI. Scopes are optional; when present, use one of:
+
+```text
+ci, deps, docs, example, health, release, service, tooling
+```
+
+For example, `fix(health): handle dependency timeouts` or
+`chore: update repository documentation`. Add package scopes as packages are
+introduced. Release Please generates `chore(release): release hardcore …` titles.
+Git-generated merge and revert messages retain commitlint's default exemptions.
+
+To validate a proposed message without creating a commit:
+
+```sh
+printf '%s\n' 'fix(service): drain active requests' | bash scripts/commitlint.sh
+```
+
 ## What belongs here?
 
 A feature belongs in Hardcore when it:
