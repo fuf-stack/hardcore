@@ -17,7 +17,7 @@ variables:
   # Go toolchain used by CI jobs.
   # releases: https://go.dev/doc/devel/release
   # renovate: datasource=golang-version depName=go versioning=go
-  GO_VERSION: "1.27.0"
+  GO_VERSION: "1.27.1"
 
   # PostgreSQL image tag used by local and CI integration tests.
   # releases: https://www.postgresql.org/docs/release/
