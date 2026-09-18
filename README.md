@@ -9,6 +9,19 @@ Hardcore is a library, not a project starter and not a public mirror of any FUF
 product. Implementations live and are released here; applications consume them
 as normal Go packages.
 
+## Binary metadata
+
+`scripts/build.sh` centralizes the flags for Makefile builds and installs.
+Call it with `build` or `install`, followed by normal Go flags and packages.
+`make build` uses `-trimpath -buildvcs=false -ldflags="-s -w -buildid="`.
+It checks compilation without writing an executable. Hardcore is distributed as
+Go source; these flags do not carry over to applications importing the library.
+Consumers must set the same flags when building their final executables to omit
+local paths, Git metadata, the Go build ID, and symbol/DWARF debug tables.
+Runtime names, type data, strings, and Go/module versions remain; stripping does
+not obfuscate code or prevent decompilation. `make run-example` retains normal
+debug information for development.
+
 ## Packages
 
 | Package | Responsibility |

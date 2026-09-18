@@ -9,7 +9,7 @@ default: check build
 
 # Compile all library packages and the example without writing binaries.
 build:
-	$(GO) build ./...
+	GO="$(GO)" bash scripts/build.sh build ./...
 
 # Verify formatting, static analysis, race tests, and coverage.
 check: lint test-race
