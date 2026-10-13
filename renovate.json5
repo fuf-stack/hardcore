@@ -14,6 +14,7 @@
   dependencyDashboardOSVVulnerabilitySummary: 'all',
   extends: [
     'config:recommended',
+    'helpers:pinGitHubActionDigests',
     'default:automergeDigest',
     'default:automergeMinor',
     'default:combinePatchMinorReleases',
