@@ -15,6 +15,13 @@
 
 * require Go 1.27 and migrate health serialization to JSON v2 ([cd31f99](https://github.com/fuf-stack/hardcore/commit/cd31f99b5a074d7763b4826b6b64f2db66d2ea85))
 
+## [1.4.2](https://github.com/fuf-stack/hardcore/compare/v1.4.1...v1.4.2) (2026-10-21)
+
+
+### Bug Fixes
+
+* **deps:** update module connectrpc.com/connect to v1.21.1 ([#22](https://github.com/fuf-stack/hardcore/issues/22)) ([2832c56](https://github.com/fuf-stack/hardcore/commit/2832c56e93035836cdfd87f4713b2a45723431cf))
+
 ## [1.4.1](https://github.com/fuf-stack/hardcore/compare/v1.4.0...v1.4.1) (2026-09-18)
 
 
