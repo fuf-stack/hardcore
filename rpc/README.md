@@ -1,5 +1,9 @@
 # RPC error boundaries
 
+> **Deprecated:** this package targets Connect v1. New servers should use
+> [`rpc/connectv2`](./connectv2) with `connectrpc.com/connect/v2`. This package
+> will be removed in the next major release.
+
 `rpc` provides `NormalizeError` and `UnaryErrorInterceptor` for Connect unary
 servers. It contains no service contracts, domain error mappings, or access policy.
 

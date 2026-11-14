@@ -10,7 +10,9 @@ architecture.
 
 - `health` owns HTTP liveness/readiness behavior and dependency checks.
 - `observability` owns opt-in request correlation and log enrichment, not sinks or product telemetry policy.
-- `rpc` owns Connect unary server error normalization, not domain classification.
+- `rpc` owns Connect v1 unary server error normalization, not domain classification.
+  It is deprecated; remove it in the next major release.
+- `rpc/connectv2` owns the same normalization for Connect v2 servers.
 - `service` owns process-serving and graceful-shutdown behavior.
 - `cmd/example` demonstrates composition and may depend on every public package.
 - Public library packages must not depend on `cmd`, examples, or a consumer.

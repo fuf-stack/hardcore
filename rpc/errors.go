@@ -1,4 +1,8 @@
-// Package rpc provides product-neutral Connect server error boundaries.
+// Package rpc provides product-neutral Connect v1 server error boundaries.
+//
+// Deprecated: Use package github.com/fuf-stack/hardcore/rpc/connectv2 with
+// connectrpc.com/connect/v2. This package will be removed in the next major
+// release.
 package rpc
 
 import (
