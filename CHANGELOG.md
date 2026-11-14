@@ -15,6 +15,20 @@
 
 * require Go 1.27 and migrate health serialization to JSON v2 ([cd31f99](https://github.com/fuf-stack/hardcore/commit/cd31f99b5a074d7763b4826b6b64f2db66d2ea85))
 
+## [1.5.0](https://github.com/fuf-stack/hardcore/compare/v1.4.1...v1.5.0) (2026-11-14)
+
+
+### Features
+
+* **rpc:** add Connect v2 server error boundary ([dc60c45](https://github.com/fuf-stack/hardcore/commit/dc60c4524b175583c7465fc0e96d2a3e1dbb8351))
+* **rpc:** add Connect v2 server error boundary ([f0d8ca9](https://github.com/fuf-stack/hardcore/commit/f0d8ca9ce9f270ee03ea38379885a595a60e7d65))
+
+
+### Bug Fixes
+
+* **deps:** update module connectrpc.com/connect to v1.21.1 ([#22](https://github.com/fuf-stack/hardcore/issues/22)) ([2832c56](https://github.com/fuf-stack/hardcore/commit/2832c56e93035836cdfd87f4713b2a45723431cf))
+* **deps:** update module github.com/jackc/pgx/v5 to v5.12.0 ([#26](https://github.com/fuf-stack/hardcore/issues/26)) ([1cfd30f](https://github.com/fuf-stack/hardcore/commit/1cfd30f1cfbc95f72b1a64230ed734db7bdcd14d))
+
 ## [1.4.1](https://github.com/fuf-stack/hardcore/compare/v1.4.0...v1.4.1) (2026-09-18)
 
 
