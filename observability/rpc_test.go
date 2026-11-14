@@ -6,13 +6,15 @@ import (
 	"encoding/json/v2"
 	"errors"
 	"log/slog"
+	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 
-	"connectrpc.com/connect"
+	"connectrpc.com/connect/v2"
+	"connectrpc.com/connect/v2/connecthttp"
 	"github.com/fuf-stack/hardcore/observability"
-	"github.com/fuf-stack/hardcore/rpc"
+	"github.com/fuf-stack/hardcore/rpc/connectv2"
 	"google.golang.org/protobuf/types/known/emptypb"
 )
 
@@ -20,36 +22,42 @@ import (
 func TestConnectErrorCorrelation(t *testing.T) {
 	var output bytes.Buffer
 	logger := slog.New(observability.NewLogHandler(slog.NewJSONHandler(&output, nil)))
-	logErrors := connect.UnaryInterceptorFunc(func(next connect.UnaryFunc) connect.UnaryFunc {
-		return func(ctx context.Context, req connect.AnyRequest) (connect.AnyResponse, error) {
-			res, err := next(ctx, req)
+	logErrors := func(next connect.ServerFunc) connect.ServerFunc {
+		return func(ctx context.Context, spec connect.Spec, stream connect.ServerStream) error {
+			err := next(ctx, spec, stream)
 			if err != nil {
 				// The application deliberately selects a safe diagnostic, not raw error text.
 				logger.ErrorContext(ctx, "operation failed", "error_class", "internal")
 			}
-			return res, err
+			return err
 		}
-	})
+	}
 	correlate, err := observability.NewRequestIDMiddleware()
 	if err != nil {
 		t.Fatal(err)
 	}
-	handler := connect.NewUnaryHandler("/example.v1.Service/Call",
-		func(context.Context, *connect.Request[emptypb.Empty]) (*connect.Response[emptypb.Empty], error) {
-			return nil, errors.New("private backend detail")
-		}, connect.WithInterceptors(rpc.UnaryErrorInterceptor(), logErrors))
-	server := httptest.NewServer(correlate(handler))
-	defer server.Close()
-	client := connect.NewClient[emptypb.Empty, emptypb.Empty](server.Client(), server.URL+"/example.v1.Service/Call")
-	_, err = client.CallUnary(t.Context(), connect.NewRequest(&emptypb.Empty{}))
+	spec := connect.Spec{StreamType: connect.StreamTypeUnary, Procedure: "/example.v1.Service/Call"}
+	server := connect.NewServer(connectv2.ServerErrorInterceptor(), logErrors)
+	server.Register(connect.Method{Spec: spec, Handler: func(_ context.Context, _ connect.Spec, stream connect.ServerStream) error {
+		if err := stream.Receive(&emptypb.Empty{}); err != nil {
+			return err
+		}
+		return errors.New("private backend detail")
+	}})
+	mux := http.NewServeMux()
+	connecthttp.Mount(mux, server)
+	httpServer := httptest.NewServer(correlate(mux))
+	defer httpServer.Close()
+	client := connect.NewClient(connecthttp.NewTransport(httpServer.Client(), httpServer.URL))
+	ctx, info := connect.NewClientContext(t.Context())
+	err = client.CallUnary(ctx, spec, &emptypb.Empty{}, &emptypb.Empty{})
 	if connect.CodeOf(err) != connect.CodeInternal || strings.Contains(err.Error(), "private") {
 		t.Fatalf("unexpected wire error: %v", err)
 	}
-	wire, ok := errors.AsType[*connect.Error](err)
-	if !ok {
+	if _, ok := errors.AsType[*connect.Error](err); !ok {
 		t.Fatal("missing Connect error")
 	}
-	id := wire.Meta().Get(observability.RequestIDHeader)
+	id := info.ResponseHeader().Get(observability.RequestIDHeader)
 	lines := strings.Split(strings.TrimSpace(output.String()), "\n")
 	if len(lines) != 1 {
 		t.Fatalf("log count = %d; want 1", len(lines))

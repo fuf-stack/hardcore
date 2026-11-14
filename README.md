@@ -29,11 +29,12 @@ debug information for development.
 | [`database`](./database) | Bounded SQL startup, pool configuration, and readiness checks |
 | [`health`](./health) | Liveness and readiness probes with bounded dependency checks |
 | [`observability`](./observability) | Trusted-proxy-aware request IDs and context-aware log correlation |
-| [`rpc`](./rpc) | Safe Connect unary server error boundaries |
+| [`rpc`](./rpc) | Deprecated: safe Connect v1 unary server error boundaries |
+| [`rpc/connectv2`](./rpc/connectv2) | Safe Connect v2 server error boundaries |
 | [`service`](./service) | HTTP serving, graceful shutdown, and post-drain resource cleanup |
 
 The foundations cover process lifecycle, health, driver-neutral SQL pools,
-request/log correlation, and unary RPC error boundaries. Further RPC conventions, queries, authentication mechanisms, shared
+request/log correlation, and RPC error boundaries for Connect v1 and v2. Further RPC conventions, queries, authentication mechanisms, shared
 contracts, and test infrastructure will be extracted only when a real consumer
 gives us a concrete API to design.
 

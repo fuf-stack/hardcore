@@ -17,6 +17,7 @@ database    health    observability    service
    └──────────┴────────────┴─────────────┴── Go standard library
 
 rpc ── Connect ── Protobuf
+rpc/connectv2 ── Connect v2 ── Protobuf
 ```
 
 `database`, `health`, `observability`, and `service` are independent foundations. The example application
@@ -28,6 +29,12 @@ first third-party runtime dependency: the public contract uses Connect errors
 and interceptors directly rather than introducing a parallel status abstraction.
 The other foundations retain their standard-library-only imports. Consumers
 that do not import `rpc` do not link Connect into their binaries.
+
+`rpc/connectv2` is the same boundary for `connectrpc.com/connect/v2`, a separate
+module path with a stream-based server API. It does not import `rpc`; the shared
+rules are duplicated deliberately so neither Connect major version links the
+other. Keeping both preserves the v1 API for existing consumers; `rpc` is
+deprecated and will be removed in the next major release.
 
 The concrete extraction is a unary error boundary: repeated transport handlers
 were wrapping unexpected storage and authorization-check failures with raw error
