@@ -1,4 +1,7 @@
 {
+  // validate with (see: https://docs.renovatebot.com/config-validation/):
+  // npx --yes --package renovate -- renovate-config-validator renovate.json5 --strict
+
   customManagers: [
     {
       customType: 'regex',
@@ -10,8 +13,10 @@
       versioningTemplate: '{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}',
     },
   ],
-  dependencyDashboardLabels: ['effort | ongoing', 'scope | dependencies'],
-  dependencyDashboardOSVVulnerabilitySummary: 'all',
+  dependencyDashboard: {
+    labels: ['effort | ongoing', 'scope | dependencies'],
+    osvVulnerabilitySummary: 'all',
+  },
   extends: [
     'config:recommended',
     'helpers:pinGitHubActionDigests',
@@ -23,7 +28,19 @@
     'default:maintainLockFilesWeekly',
     'default:prHourlyLimit4',
   ],
-  minimumReleaseAge: '7 days',
+  // Wait 14 days before creating PRs (supply chain attacks).
+  // see: https://docs.renovatebot.com/configuration-options/#minimumreleaseage
+  minimumReleaseAge: '14 days',
+  // Exclude releases until the age requirement passes, then create PRs
+  // immediately rather than waiting for branch checks.
+  internalChecksFilter: 'strict',
+  prCreation: 'immediate',
+  // Also create security PRs from osv.dev data (covers Go modules), independent
+  // of whether GitHub Dependabot alerts are readable by the Renovate app.
+  // Vulnerability fixes skip minimumReleaseAge and the schedule. Does not cover
+  // the Go toolchain or Docker images in versions.yaml.
+  // see: https://docs.renovatebot.com/configuration-options/#osvvulnerabilityalerts
+  osvVulnerabilityAlerts: true,
   prConcurrentLimit: 20,
   rebaseWhen: 'conflicted',
   stopUpdatingLabel: 'renovate | stop update',
