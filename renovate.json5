@@ -41,6 +41,13 @@
   // the Go toolchain or Docker images in versions.yaml.
   // see: https://docs.renovatebot.com/configuration-options/#osvvulnerabilityalerts
   osvVulnerabilityAlerts: true,
+  // Commit security updates as fix (otherwise chore), so release-please
+  // lists them in the changelog. Applies to OSV and GitHub alert PRs and
+  // merges with default:enableVulnerabilityAlerts above.
+  // see: https://docs.renovatebot.com/configuration-options/#vulnerabilityalerts
+  vulnerabilityAlerts: {
+    semanticCommitType: 'fix',
+  },
   prConcurrentLimit: 20,
   rebaseWhen: 'conflicted',
   stopUpdatingLabel: 'renovate | stop update',
