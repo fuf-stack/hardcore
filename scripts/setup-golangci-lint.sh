@@ -76,8 +76,8 @@ install_golangci_lint() {
   trap cleanup_golangci_lint_tmp EXIT
 
   echo "Downloading $archive..."
-  curl -sSfL -o "$tmpdir/$archive" "$base_url/$archive"
-  curl -sSfL -o "$tmpdir/$checksum_file" "$base_url/$checksum_file"
+  curl --proto =https --proto-redir =https -sSfL -o "$tmpdir/$archive" "$base_url/$archive"
+  curl --proto =https --proto-redir =https -sSfL -o "$tmpdir/$checksum_file" "$base_url/$checksum_file"
 
   expected="$(awk -v filename="$archive" '$2 == filename {print $1}' "$tmpdir/$checksum_file")"
   if [ -z "$expected" ]; then
