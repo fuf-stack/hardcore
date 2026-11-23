@@ -18,14 +18,25 @@
     osvVulnerabilitySummary: 'all',
   },
   extends: [
+    // Recommended defaults
     'config:recommended',
+    // Pin GitHub Actions to commit SHAs
     'helpers:pinGitHubActionDigests',
+    // Exact action versions (# v6.1.1) so minimumReleaseAge can pass
+    'helpers:pinGitHubActionDigestsToSemver',
+    // Automerge digest updates
     'default:automergeDigest',
+    // Automerge minor and patch updates
     'default:automergeMinor',
+    // One PR for patch and minor updates
     'default:combinePatchMinorReleases',
+    // Dependency dashboard issue
     'default:dependencyDashboard',
+    // PRs for GitHub vulnerability alerts
     'default:enableVulnerabilityAlerts',
+    // Refresh lockfiles weekly
     'default:maintainLockFilesWeekly',
+    // At most 4 PRs per hour
     'default:prHourlyLimit4',
   ],
   // Wait 14 days before creating PRs (supply chain attacks).
