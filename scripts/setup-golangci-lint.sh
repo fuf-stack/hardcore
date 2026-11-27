@@ -9,16 +9,17 @@ set -euo pipefail
 VERSION="${1:-}"
 BINDIR="${2:-}"
 
-if [ -z "$VERSION" ] || [ -z "$BINDIR" ]; then
+if [[ -z "$VERSION" || -z "$BINDIR" ]]; then
   echo "Usage: $0 <version-without-v-prefix> <install-dir>" >&2
   exit 1
 fi
 
 sha256_file() {
+  local file="$1"
   if command -v sha256sum >/dev/null 2>&1; then
-    sha256sum "$1" | awk '{print $1}'
+    sha256sum "$file" | awk '{print $1}'
   elif command -v shasum >/dev/null 2>&1; then
-    shasum -a 256 "$1" | awk '{print $1}'
+    shasum -a 256 "$file" | awk '{print $1}'
   else
     echo "Unable to find sha256sum or shasum for checksum verification" >&2
     exit 1
@@ -59,8 +60,8 @@ golangci_lint_platform() {
 }
 
 install_golangci_lint() {
-  version="$1"
-  bindir="$2"
+  local version="$1"
+  local bindir="$2"
   platform="$(golangci_lint_platform)"
   goos="${platform% *}"
   goarch="${platform#* }"
@@ -80,13 +81,13 @@ install_golangci_lint() {
   curl --proto =https --proto-redir =https -sSfL -o "$tmpdir/$checksum_file" "$base_url/$checksum_file"
 
   expected="$(awk -v filename="$archive" '$2 == filename {print $1}' "$tmpdir/$checksum_file")"
-  if [ -z "$expected" ]; then
+  if [[ -z "$expected" ]]; then
     echo "Failed to find checksum for $archive in $checksum_file" >&2
     exit 1
   fi
 
   actual="$(sha256_file "$tmpdir/$archive")"
-  if [ "$actual" != "$expected" ]; then
+  if [[ "$actual" != "$expected" ]]; then
     echo "Checksum verification failed for $archive" >&2
     echo "$actual vs $expected" >&2
     exit 1
