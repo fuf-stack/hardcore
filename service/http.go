@@ -21,6 +21,8 @@ var (
 // ShutdownHook runs when cancellation, a serving failure, or external shutdown
 // ends serving, before Hardcore drains the HTTP server. Hooks share the
 // configured shutdown deadline and should respect context cancellation.
+// The hook context carries the values of the context passed to Serve but is
+// not canceled by it.
 // Hooks run synchronously. A hook that ignores cancellation can delay shutdown
 // indefinitely; the timeout cannot forcibly interrupt application code.
 type ShutdownHook func(context.Context) error
@@ -149,7 +151,8 @@ func serve(ctx context.Context, server *http.Server, listener net.Listener, cfg 
 	case <-ctx.Done():
 	}
 
-	shutdownCtx, cancel := context.WithTimeout(context.Background(), cfg.shutdownTimeout)
+	// Shutdown must outlive ctx's cancellation but keeps its values.
+	shutdownCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), cfg.shutdownTimeout)
 	defer cancel()
 
 	var shutdownErrors []error
