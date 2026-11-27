@@ -1,9 +1,8 @@
 # Connect v2 error boundaries
 
 `connectv2` provides `NormalizeError` and `ServerErrorInterceptor` for servers
-built on `connectrpc.com/connect/v2`. It is the Connect v2 counterpart of
-[`rpc`](..), which keeps serving Connect v1. It contains no service contracts,
-domain error mappings, or access policy.
+built on `connectrpc.com/connect/v2`. It contains no service contracts, domain
+error mappings, or access policy. Connect v1 is not supported.
 
 ```go
 server := connect.NewServer(connectv2.ServerErrorInterceptor(), logging)
@@ -23,13 +22,13 @@ the original error before normalization. Nothing is logged automatically.
   become internal errors without the peer's code, message, or details.
 - Unclassified errors become internal errors without exposing their cause.
 
-## Differences from `rpc`
+## Behavior
 
 Connect v2 server interceptors surround the whole call, so the boundary covers
 unary and streaming RPCs alike. On streams it replaces only the final error;
 messages already sent are unaffected. Connect v2 errors carry no metadata, so
 response headers and trailers set by handlers pass through unchanged. Remote
-errors are handled explicitly because v2 marks them; `rpc` has no such signal.
+errors are handled explicitly because v2 marks them.
 
 An explicit Connect status takes precedence over wrapped context errors. For
 joined context errors without an explicit status, deadline takes precedence.

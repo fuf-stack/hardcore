@@ -16,7 +16,6 @@ database    health    observability    service
    │          │            │             │
    └──────────┴────────────┴─────────────┴── Go standard library
 
-rpc ── Connect ── Protobuf
 rpc/connectv2 ── Connect v2 ── Protobuf
 ```
 
@@ -24,17 +23,16 @@ rpc/connectv2 ── Connect v2 ── Protobuf
 composes them by using a service shutdown hook to close its readiness gate.
 No production package depends on another foundation package.
 
-`rpc` independently depends on Connect and its Protobuf dependency. This is the
-first third-party runtime dependency: the public contract uses Connect errors
-and interceptors directly rather than introducing a parallel status abstraction.
-The other foundations retain their standard-library-only imports. Consumers
-that do not import `rpc` do not link Connect into their binaries.
+`rpc/connectv2` independently depends on `connectrpc.com/connect/v2` and its
+Protobuf dependency. This is the only third-party runtime dependency: the public
+contract uses Connect errors and interceptors directly rather than introducing
+a parallel status abstraction. The other foundations retain their
+standard-library-only imports. Consumers that do not import `rpc/connectv2` do
+not link Connect into their binaries.
 
-`rpc/connectv2` is the same boundary for `connectrpc.com/connect/v2`, a separate
-module path with a stream-based server API. It does not import `rpc`; the shared
-rules are duplicated deliberately so neither Connect major version links the
-other. Keeping both preserves the v1 API for existing consumers; `rpc` is
-deprecated and will be removed in the next major release.
+The former Connect v1 package `rpc` was removed after all known consumers moved
+to Connect v2. Hardcore is used internally, so the removal shipped in a minor
+release rather than a new `/v2` module path.
 
 The concrete extraction is a unary error boundary: repeated transport handlers
 were wrapping unexpected storage and authorization-check failures with raw error
