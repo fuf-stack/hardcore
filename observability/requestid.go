@@ -46,33 +46,46 @@ func NewRequestIDMiddleware(trustedProxies ...netip.Prefix) (func(http.Handler) 
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			id := ""
-			if peer, err := netip.ParseAddrPort(r.RemoteAddr); err == nil {
-				for _, prefix := range trustedProxies {
-					if prefix.Contains(peer.Addr().Unmap().WithZone("")) {
-						id = incomingRequestID(r.Header)
-						break
-					}
-				}
+			if trustedPeer(r.RemoteAddr, trustedProxies) {
+				id = incomingRequestID(r.Header)
 			}
 			if id == "" {
 				id = rand.Text()
 			}
 
 			r = r.Clone(context.WithValue(r.Context(), requestIDKey{}, id))
-			if r.Header == nil {
-				r.Header = make(http.Header)
-			}
-			// Remove differently cased duplicates too, including in in-process requests.
-			for key := range r.Header {
-				if strings.EqualFold(key, RequestIDHeader) {
-					delete(r.Header, key)
-				}
-			}
-			r.Header.Set(RequestIDHeader, id)
+			r.Header = withRequestID(r.Header, id)
 			w.Header().Set(RequestIDHeader, id)
 			next.ServeHTTP(w, r)
 		})
 	}, nil
+}
+
+// trustedPeer reports whether the direct peer address is in a trusted prefix.
+func trustedPeer(remoteAddr string, trustedProxies []netip.Prefix) bool {
+	peer, err := netip.ParseAddrPort(remoteAddr)
+	if err != nil {
+		return false
+	}
+	addr := peer.Addr().Unmap().WithZone("")
+	return slices.ContainsFunc(trustedProxies, func(prefix netip.Prefix) bool {
+		return prefix.Contains(addr)
+	})
+}
+
+// withRequestID sets the ID on a cloned header, removing differently cased
+// duplicates too, including in in-process requests.
+func withRequestID(header http.Header, id string) http.Header {
+	if header == nil {
+		header = make(http.Header)
+	}
+	for key := range header {
+		if strings.EqualFold(key, RequestIDHeader) {
+			delete(header, key)
+		}
+	}
+	header.Set(RequestIDHeader, id)
+	return header
 }
 
 // incomingRequestID rejects ambiguous or unsafe correlation values, not requests.
