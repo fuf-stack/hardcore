@@ -15,6 +15,14 @@
 
 * require Go 1.27 and migrate health serialization to JSON v2 ([cd31f99](https://github.com/fuf-stack/hardcore/commit/cd31f99b5a074d7763b4826b6b64f2db66d2ea85))
 
+## [1.5.1](https://github.com/fuf-stack/hardcore/compare/v1.5.0...v1.5.1) (2026-11-27)
+
+
+### Bug Fixes
+
+* **deps:** update module github.com/jackc/pgx/v5 to v5.13.0 ([#29](https://github.com/fuf-stack/hardcore/issues/29)) ([9e9e66a](https://github.com/fuf-stack/hardcore/commit/9e9e66a5018f69bee15460a43489ad8ded2034d0))
+* **service:** keep Serve context values in shutdown hooks ([2c8e24b](https://github.com/fuf-stack/hardcore/commit/2c8e24b3c454929521243a0f81ca425efe3c66a9))
+
 ## [1.5.0](https://github.com/fuf-stack/hardcore/compare/v1.4.1...v1.5.0) (2026-11-14)
 
 
