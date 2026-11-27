@@ -80,14 +80,9 @@ func ParseURL(raw string) (Connection, error) {
 	if err != nil || u.Scheme == "" {
 		return Connection{}, ErrInvalidURL
 	}
-	q, err := url.ParseQuery(u.RawQuery)
+	q, err := parseQuery(u.RawQuery)
 	if err != nil {
-		return Connection{}, ErrInvalidURL
-	}
-	for key, values := range q {
-		if key == "" || len(values) != 1 || hasControl(key) || hasControl(values[0]) {
-			return Connection{}, ErrInvalidURL
-		}
+		return Connection{}, err
 	}
 	decoded, err := url.PathUnescape(u.EscapedPath() + u.Opaque)
 	if err != nil || hasControl(decoded) {
@@ -95,19 +90,10 @@ func ParseURL(raw string) (Connection, error) {
 	}
 	switch u.Scheme {
 	case "file":
-		if u.User != nil || (u.Host != "" && u.Host != "localhost") || (u.Path == "" && u.Opaque == "") {
-			return Connection{}, ErrInvalidURL
-		}
-		return Connection{dialect: SQLite, dsn: input}, nil
+		return sqliteConnection(u, input)
 	case "mysql", "postgres", "postgresql":
-		if u.Opaque != "" || !strings.Contains(input, "://") || !validAuthority(u) {
+		if u.Opaque != "" || !strings.Contains(input, "://") || !validAuthority(u) || !validUserinfo(u.User) {
 			return Connection{}, ErrInvalidURL
-		}
-		if u.User != nil {
-			password, _ := u.User.Password()
-			if hasControl(u.User.Username()) || hasControl(password) {
-				return Connection{}, ErrInvalidURL
-			}
 		}
 		if u.Scheme != "mysql" {
 			return Connection{dialect: PostgreSQL, dsn: raw}, nil
@@ -116,6 +102,37 @@ func ParseURL(raw string) (Connection, error) {
 	default:
 		return Connection{}, ErrUnsupportedScheme
 	}
+}
+
+// parseQuery rejects empty or duplicate keys and control characters.
+func parseQuery(rawQuery string) (url.Values, error) {
+	q, err := url.ParseQuery(rawQuery)
+	if err != nil {
+		return nil, ErrInvalidURL
+	}
+	for key, values := range q {
+		if key == "" || len(values) != 1 || hasControl(key) || hasControl(values[0]) {
+			return nil, ErrInvalidURL
+		}
+	}
+	return q, nil
+}
+
+// sqliteConnection accepts local file: URIs without credentials.
+func sqliteConnection(u *url.URL, input string) (Connection, error) {
+	if u.User != nil || (u.Host != "" && u.Host != "localhost") || (u.Path == "" && u.Opaque == "") {
+		return Connection{}, ErrInvalidURL
+	}
+	return Connection{dialect: SQLite, dsn: input}, nil
+}
+
+// validUserinfo rejects control characters in credentials.
+func validUserinfo(user *url.Userinfo) bool {
+	if user == nil {
+		return true
+	}
+	password, _ := user.Password()
+	return !hasControl(user.Username()) && !hasControl(password)
 }
 
 // validAuthority bounds the URL API to a single host; native multi-host/socket
