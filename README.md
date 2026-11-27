@@ -92,7 +92,8 @@ is set. CI runs the full suite separately from the unit coverage gate.
 
 Serving failures, cancellation, and external shutdown all run shutdown hooks and
 drain active HTTP requests before returning. Hooks must respect their shared
-shutdown context. Readiness rechecks its gate after dependency checks finish;
+shutdown context, which keeps the values of the context passed to `Serve` but
+not its cancellation. Readiness rechecks its gate after dependency checks finish;
 a dependency check that panics reports failure without exposing panic details.
 
 Concurrent probes share an in-flight execution of each registered readiness

@@ -65,6 +65,41 @@ func TestServeShutsDownAfterCancellation(t *testing.T) {
 	}
 }
 
+// TestServeShutdownHookContextKeepsValuesWithoutCancellation verifies that
+// hooks see values from Serve's context but not its cancellation.
+func TestServeShutdownHookContextKeepsValuesWithoutCancellation(t *testing.T) {
+	type key struct{}
+	listener := listen(t)
+	server := &http.Server{ReadHeaderTimeout: time.Second}
+
+	ctx, cancel := context.WithCancel(context.WithValue(t.Context(), key{}, "value"))
+	cancel()
+	var hookValue any
+	var hookErr error
+	var hasDeadline bool
+	err := service.Serve(ctx, server, listener,
+		service.WithShutdownTimeout(time.Second),
+		service.WithShutdownHook(func(hookCtx context.Context) error {
+			hookValue = hookCtx.Value(key{})
+			hookErr = hookCtx.Err()
+			_, hasDeadline = hookCtx.Deadline()
+			return nil
+		}),
+	)
+	if err != nil {
+		t.Fatalf("serve: %v", err)
+	}
+	if hookValue != "value" {
+		t.Fatalf("hook context value = %v, want %q", hookValue, "value")
+	}
+	if hookErr != nil {
+		t.Fatalf("hook context error = %v, want nil", hookErr)
+	}
+	if !hasDeadline {
+		t.Fatal("hook context has no shutdown deadline")
+	}
+}
+
 // TestServeWaitsForInFlightRequest verifies that graceful shutdown drains an
 // active handler rather than returning as soon as cancellation is received.
 func TestServeWaitsForInFlightRequest(t *testing.T) {
